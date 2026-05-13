@@ -12,6 +12,8 @@ public class CourseRenderer
 {
     private const double RowHeight = 100;
     private const double TrackY = RowHeight * 5;
+    private const int CenterTextFontSize = 25;
+    private const int EndTextFontSize = 20;
     private readonly Canvas canvas;
 
     public double Width => canvas.ActualWidth;
@@ -57,22 +59,7 @@ public class CourseRenderer
 
             canvas.Children.Add(rect);
             
-            TextBlock centerText = new TextBlock
-            {
-                Text = i.ToString(),
-                Foreground = Brushes.Black,
-                FontWeight = FontWeights.Bold,
-                FontSize = 25
-            };
-            
-            centerText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            var textWidth = centerText.DesiredSize.Width;
-
-            Canvas.SetLeft(centerText, sectionWidth * (i - 1) + sectionWidth / 2 - textWidth / 2);
-            Canvas.SetTop(centerText, canvas.ActualHeight - RowHeight / 2 - 20);
-            Canvas.SetZIndex(centerText, 10);
-
-            canvas.Children.Add(centerText);
+            DrawCenteredText(i.ToString(), sectionWidth * (i - 1) + sectionWidth / 2, canvas.ActualHeight - RowHeight);
         }
     }
 
@@ -134,18 +121,7 @@ public class CourseRenderer
     {
         var y = canvas.ActualHeight - RowHeight * 4;
         
-        Rectangle rect = new Rectangle
-        {
-            Width = canvas.ActualWidth,
-            Height = RowHeight,
-            Fill = Brushes.LightCyan
-        };
-        
-        Canvas.SetLeft(rect, 0);
-        Canvas.SetTop(rect, y);
-        Canvas.SetZIndex(rect, 1);
-        
-        canvas.Children.Add(rect);
+        DrawRectangle(0, y,  canvas.ActualWidth, Brushes.LightCyan);
 
         foreach (var slope in courseSlopes)
         {
@@ -165,35 +141,9 @@ public class CourseRenderer
                 brush = Brushes.LightSeaGreen;
             }
 
-            rect = new Rectangle
-            {
-                Width = width,
-                Height = RowHeight,
-                Fill = brush
-            };
-
-            Canvas.SetLeft(rect, X(slope.Start, scale));
-            Canvas.SetTop(rect, y);
-            Canvas.SetZIndex(rect, 1);
-
-            canvas.Children.Add(rect);
+            DrawRectangle(x, y, width, brush);
             
-            TextBlock centerText = new TextBlock
-            {
-                Text = label,
-                Foreground = Brushes.Black,
-                FontWeight = FontWeights.Bold,
-                FontSize = 25
-            };
-
-            centerText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            var textWidth = centerText.DesiredSize.Width;
-
-            Canvas.SetLeft(centerText, x + width / 2 - textWidth / 2);
-            Canvas.SetTop(centerText, y + RowHeight / 2 - 20);
-            Canvas.SetZIndex(centerText, 10);
-
-            canvas.Children.Add(centerText);
+            DrawCenteredText(label, x + width / 2, y);
 
             var index = courseSlopes.IndexOf(slope);
 
@@ -208,7 +158,7 @@ public class CourseRenderer
                     Text = $"{slope.Start}m",
                     Foreground = Brushes.Black,
                     FontWeight = FontWeights.Bold,
-                    FontSize = 20
+                    FontSize = EndTextFontSize
                 };
 
                 startText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
@@ -221,22 +171,7 @@ public class CourseRenderer
                 canvas.Children.Add(startText);
             }
             
-            TextBlock endText = new TextBlock
-            {
-                Text = $"{slope.End}m",
-                Foreground = Brushes.Black,
-                FontWeight = FontWeights.Bold,
-                FontSize = 20
-            };
-
-            endText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            double endWidth = endText.DesiredSize.Width;
-
-            Canvas.SetLeft(endText, x + width - endWidth / 2);
-            Canvas.SetTop(endText, y + RowHeight / 2 + 5);
-            Canvas.SetZIndex(endText, 10);
-
-            canvas.Children.Add(endText);
+            DrawEndText($"{slope.End}m", x + width, y, 5);
         }
     }
 
@@ -249,35 +184,9 @@ public class CourseRenderer
             double x = X(noMansLand.Start, scale);
             double width = X(noMansLand.End - noMansLand.Start, scale);
 
-            Rectangle rect = new Rectangle
-            {
-                Width = width,
-                Height = RowHeight,
-                Fill = Brushes.LightGray
-            };
+            DrawRectangle(x, y, width, Brushes.LightGray);
 
-            Canvas.SetLeft(rect, X(noMansLand.Start, scale));
-            Canvas.SetTop(rect, y);
-            Canvas.SetZIndex(rect, 1);
-
-            canvas.Children.Add(rect);
-
-            TextBlock endText = new TextBlock
-            {
-                Text = $"{noMansLand.End}m",
-                Foreground = Brushes.Black,
-                FontWeight = FontWeights.Bold,
-                FontSize = 25
-            };
-
-            endText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            double endWidth = endText.DesiredSize.Width;
-
-            Canvas.SetLeft(endText, x + width - endWidth / 2);
-            Canvas.SetTop(endText, y + RowHeight / 2);
-            Canvas.SetZIndex(endText, 10);
-
-            canvas.Children.Add(endText);
+            DrawEndText($"{noMansLand.End}m", x + width, y, 10);
         }
     }
 
@@ -292,52 +201,11 @@ public class CourseRenderer
 
             Brush brush = corner.Number % 2 == 0 ? Brushes.Coral : Brushes.Orange;
 
-            Rectangle rect = new Rectangle
-            {
-                Width = width,
-                Height = RowHeight,
-                Fill = brush
-            };
+            DrawRectangle(x, y, width, brush);
 
-            Canvas.SetLeft(rect, X(corner.Start, scale));
-            Canvas.SetTop(rect, y);
-            Canvas.SetZIndex(rect, 1);
+            DrawCenteredText($"Corner ↪ {corner.Number}", x + width / 2, y);
 
-            canvas.Children.Add(rect);
-
-            TextBlock centerText = new TextBlock
-            {
-                Text = $"Corner ↪ {corner.Number}",
-                Foreground = Brushes.Black,
-                FontWeight = FontWeights.Bold,
-                FontSize = 25
-            };
-
-            centerText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            var textWidth = centerText.DesiredSize.Width;
-
-            Canvas.SetLeft(centerText, x + width / 2 - textWidth / 2);
-            Canvas.SetTop(centerText, y + RowHeight / 2 - 20);
-            Canvas.SetZIndex(centerText, 10);
-
-            canvas.Children.Add(centerText);
-
-            TextBlock endText = new TextBlock
-            {
-                Text = $"{corner.End}m",
-                Foreground = Brushes.Black,
-                FontWeight = FontWeights.Bold,
-                FontSize = 25
-            };
-
-            endText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            double endWidth = endText.DesiredSize.Width;
-
-            Canvas.SetLeft(endText, x + width - endWidth / 2);
-            Canvas.SetTop(endText, y + RowHeight / 2);
-            Canvas.SetZIndex(endText, 10);
-
-            canvas.Children.Add(endText);
+            DrawEndText($"{corner.End}m", x + width, y, 10);
         }
     }
 
@@ -351,54 +219,13 @@ public class CourseRenderer
             double x = X(straight.Start, scale);
             double width = X(straight.End - straight.Start, scale);
 
-            Rectangle rect = new Rectangle
-            {
-                Width = width,
-                Height = RowHeight,
-                Fill = Brushes.LightSkyBlue
-            };
+            DrawRectangle(x, y, width, Brushes.LightSkyBlue);
 
-            Canvas.SetLeft(rect, X(straight.Start, scale));
-            Canvas.SetTop(rect, y);
-            Canvas.SetZIndex(rect, 1);
-
-            canvas.Children.Add(rect);
-
-            TextBlock centerText = new TextBlock
-            {
-                Text = "Straight →",
-                Foreground = Brushes.Black,
-                FontWeight = FontWeights.Bold,
-                FontSize = 25
-            };
-
-            centerText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            var textWidth = centerText.DesiredSize.Width;
-
-            Canvas.SetLeft(centerText, x + width / 2 - textWidth / 2);
-            Canvas.SetTop(centerText, y + RowHeight / 2 - 20);
-            Canvas.SetZIndex(centerText, 10);
-
-            canvas.Children.Add(centerText);
+            DrawCenteredText("Straight →", x + width / 2, y);
 
             if (i == courseStraights.Count - 1) continue;
 
-            TextBlock endText = new TextBlock
-            {
-                Text = $"{straight.End}m",
-                Foreground = Brushes.Black,
-                FontWeight = FontWeights.Bold,
-                FontSize = 25
-            };
-
-            endText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            double endWidth = endText.DesiredSize.Width;
-
-            Canvas.SetLeft(endText, x + width - endWidth / 2);
-            Canvas.SetTop(endText, y + RowHeight / 2);
-            Canvas.SetZIndex(endText, 10);
-
-            canvas.Children.Add(endText);
+            DrawEndText($"{straight.End}m", x + width, y, 10);
         }
     }
 
@@ -408,78 +235,101 @@ public class CourseRenderer
         
         foreach (var phase in coursePhases)
         {
-            Brush brush = phase.PhaseType switch
-            {
-                PhaseType.OpeningLeg => Brushes.CadetBlue,
-                PhaseType.MiddleLeg => Brushes.Khaki,
-                PhaseType.FinalLeg => Brushes.MediumOrchid,
-                _ => Brushes.MediumPurple
-            };
-
-            string phaseLabel = phase.PhaseType switch
-            {
-                PhaseType.OpeningLeg => "Opening Leg",
-                PhaseType.MiddleLeg => "Middle Leg",
-                PhaseType.FinalLeg => "Final Leg",
-                _ => "Last Spurt"
-            };
+            var brush = GetPhaseBrush(phase);
+            var phaseLabel = GetPhaseLabel(phase);
             
             double x = X(phase.Start, scale);
             double width = X(phase.End - phase.Start, scale);
             
-            Rectangle rect = new Rectangle
-            {
-                Width = width,
-                Height = RowHeight,
-                Fill = brush
-            };
+            DrawRectangle(x, y, width, brush);
             
-            Canvas.SetLeft(rect, X(phase.Start, scale));
-            Canvas.SetTop(rect, y);
-            Canvas.SetZIndex(rect, 1);
-
-            canvas.Children.Add(rect);
-            
-            TextBlock centerText = new TextBlock
-            {
-                Text = phaseLabel,
-                Foreground = Brushes.Black,
-                FontWeight = FontWeights.Bold,
-                FontSize = 25
-            };
-            
-            centerText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            var textWidth = centerText.DesiredSize.Width;
-
-            Canvas.SetLeft(centerText, x + width / 2 - textWidth / 2);
-            Canvas.SetTop(centerText, y + RowHeight / 2 - 20);
-            Canvas.SetZIndex(centerText, 10);
-
-            canvas.Children.Add(centerText);
+            DrawCenteredText(phaseLabel, x + width / 2, y);
 
             if (phase.PhaseType == PhaseType.LastSpurt) continue;
             
-            TextBlock endText = new TextBlock
-            {
-                Text = $"{phase.End}m",
-                Foreground = Brushes.Black,
-                FontWeight = FontWeights.Bold,
-                FontSize = 25
-            };
-
-            endText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            double endWidth = endText.DesiredSize.Width;
-
-            Canvas.SetLeft(endText, x + width - endWidth / 2);
-            Canvas.SetTop(endText, y + RowHeight / 2);
-            Canvas.SetZIndex(endText, 10);
-
-            canvas.Children.Add(endText);
+            DrawEndText($"{phase.End}m", x + width, y, 10);
         }
     }
-    
+
+    private static string GetPhaseLabel(Phase phase)
+    {
+        string phaseLabel = phase.PhaseType switch
+        {
+            PhaseType.OpeningLeg => "Opening Leg",
+            PhaseType.MiddleLeg => "Middle Leg",
+            PhaseType.FinalLeg => "Final Leg",
+            _ => "Last Spurt"
+        };
+        return phaseLabel;
+    }
+
+    private static Brush GetPhaseBrush(Phase phase)
+    {
+        Brush brush = phase.PhaseType switch
+        {
+            PhaseType.OpeningLeg => Brushes.CadetBlue,
+            PhaseType.MiddleLeg => Brushes.Khaki,
+            PhaseType.FinalLeg => Brushes.MediumOrchid,
+            _ => Brushes.MediumPurple
+        };
+        return brush;
+    }
+
     private double X(double meters, double scale)
     {
         return meters * scale;
+    }
+    
+    private void DrawRectangle(double x, double y, double width, Brush fill)
+    {
+        Rectangle rect = new Rectangle
+        {
+            Width = width,
+            Height = RowHeight,
+            Fill = fill
+        };
+
+        Canvas.SetLeft(rect, x);
+        Canvas.SetTop(rect, y);
+
+        canvas.Children.Add(rect);
+    }
+    
+    private void DrawCenteredText(string text, double x, double y, Brush? foreground = null)
+    {
+        TextBlock tb = new TextBlock
+        {
+            Text = text,
+            Foreground = foreground ?? Brushes.Black,
+            FontWeight = FontWeights.Bold,
+            FontSize = CenterTextFontSize
+        };
+
+        tb.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+
+        Canvas.SetLeft(tb, x - tb.DesiredSize.Width / 2);
+        Canvas.SetTop(tb, y + RowHeight / 2 - 20);
+        Canvas.SetZIndex(tb, 10);
+
+        canvas.Children.Add(tb);
+    }
+    
+    private void DrawEndText(string text, double x, double y, int yAdjustment, Brush? foreground = null)
+    {
+        TextBlock tb = new TextBlock
+        {
+            Text = text,
+            Foreground = foreground ?? Brushes.Black,
+            FontWeight = FontWeights.Bold,
+            FontSize = EndTextFontSize
+        };
+
+        tb.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+
+        Canvas.SetLeft(tb, x - tb.DesiredSize.Width / 2);
+        Canvas.SetTop(tb, y + RowHeight / 2 + yAdjustment);
+        Canvas.SetZIndex(tb, 10);
+
+        canvas.Children.Add(tb);
     }
 }
