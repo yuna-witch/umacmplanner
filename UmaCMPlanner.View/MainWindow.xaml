@@ -5,11 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UmaCMPlanner.View"
         xmlns:viewModel="clr-namespace:UmaCMPlanner.ViewModel;assembly=UmaCMPlanner.ViewModel"
+        xmlns:converters="clr-namespace:UmaCMPlanner.View.Converters"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1100" Background="DimGray">
+        Title="MainWindow" Height="700" Width="1100" Background="#12151c" WindowState="Maximized">
     <Window.DataContext>
         <viewModel:MainWindowViewModel />
     </Window.DataContext>
+    <Window.Resources>
+        <converters:StatToIconConverter x:Key="StatToIconConverter" />
+    </Window.Resources>
 
     <Grid Margin="20" ShowGridLines="False">
         <Grid.ColumnDefinitions>
@@ -24,6 +28,7 @@
             <RowDefinition Height="0.2*"></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition Height="0.1*"></RowDefinition>
             <RowDefinition Height="0.2*"></RowDefinition>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Title}" TextAlignment="Center" FontSize="20"
@@ -38,10 +43,73 @@
         <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Margin="30" Content="🡆" FontSize="20"
                 Command="{Binding RightButtonCommand}">
         </Button>
+        
+        <ItemsControl Grid.Row="2" Grid.Column="3" ItemsSource="{Binding GreenSkills}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
 
-        <Viewbox Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="3" Stretch="Uniform">
-            <Canvas x:Name="TrackCanvas" Width="1920" Height="1080">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Grid.Column="0" Source="{Binding IconPath}" Width="32" Height="32" VerticalAlignment="Center"/>
+
+                        <TextBlock Grid.Column="1" Text="{Binding Text}" Foreground="LightGray" FontSize="18" VerticalAlignment="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Viewbox Grid.Row="3" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="3" Stretch="Uniform">
+            <Canvas x:Name="TrackCanvas" Width="1920" Height="540">
             </Canvas>
         </Viewbox>
+
+        <StackPanel Grid.Row="5" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
+
+            <TextBlock Text="Stat Thresholds: " Foreground="LightGray" FontSize="18" VerticalAlignment="Center" />
+            
+            <ItemsControl ItemsSource="{Binding CourseOfSelectedCm.StatThresholds}">
+                <ItemsControl.Style>
+                    <Style TargetType="ItemsControl">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CourseOfSelectedCm.StatThresholds.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.Style>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Image Width="32" Height="32" Margin="5" Source="{Binding Converter={StaticResource StatToIconConverter}}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            
+            <TextBlock Text="none" Foreground="LightGray" FontSize="18" VerticalAlignment="Center">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CourseOfSelectedCm.StatThresholds.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </StackPanel>
     </Grid>
 </Window>

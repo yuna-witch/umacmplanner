@@ -13,4 +13,29 @@
       <ProjectReference Include="..\UmaCMPlanner.ViewModel\UmaCMPlanner.ViewModel.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Resources\StatIcons\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\StatIcons\Guts.png" />
+      <Resource Include="Resources\StatIcons\Guts.png" />
+      <None Remove="Resources\StatIcons\Power.png" />
+      <Resource Include="Resources\StatIcons\Power.png" />
+      <None Remove="Resources\StatIcons\Speed.png" />
+      <Resource Include="Resources\StatIcons\Speed.png" />
+      <None Remove="Resources\StatIcons\Stamina.png" />
+      <Resource Include="Resources\StatIcons\Stamina.png" />
+      <None Remove="Resources\StatIcons\Wit.png" />
+      <Resource Include="Resources\StatIcons\Wit.png" />
+      <None Remove="Resources\GreenIcons\Guts.png" />
+      <Resource Include="Resources\GreenIcons\Guts.png" />
+      <None Remove="Resources\GreenIcons\Power.png" />
+      <Resource Include="Resources\GreenIcons\Power.png" />
+      <None Remove="Resources\GreenIcons\Speed.png" />
+      <Resource Include="Resources\GreenIcons\Speed.png" />
+      <None Remove="Resources\GreenIcons\Stamina.png" />
+      <Resource Include="Resources\GreenIcons\Stamina.png" />
+    </ItemGroup>
+
 </Project>

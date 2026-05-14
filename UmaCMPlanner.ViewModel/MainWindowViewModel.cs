@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using UmaCMPlanner.BusinessLogic;
 using UmaCMPlanner.BusinessLogic.Enums;
 using UmaCMPlanner.DataAccess;
+using UmaCMPlanner.ViewModel.Helpers;
 
 namespace UmaCMPlanner.ViewModel;
 
@@ -28,9 +29,12 @@ public class MainWindowViewModel : INotifyPropertyChanged
             SetField(ref field, value);
             OnPropertyChanged(nameof(Title));
             OnPropertyChanged(nameof(CourseOfSelectedCm));
+            OnPropertyChanged(nameof(GreenSkills));
         }
     }
     
+    public List<GreenSkillDisplay> GreenSkills => GetGreenSkills();
+
     public Course CourseOfSelectedCm => GetCourseForSelectedCm();
 
     public RelayCommand LeftButtonCommand { get; }
@@ -44,6 +48,38 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private Course GetCourseForSelectedCm()
     {
         return RaceTracks[SelectedCm.Track].Courses.FirstOrDefault(c => c.Id == SelectedCm.CourseId)!;
+    }
+    
+    private List<GreenSkillDisplay> GetGreenSkills()
+    {
+        var cm = SelectedCm;
+
+        return new List<GreenSkillDisplay>
+        {
+            new()
+            {
+                IconPath = "/Resources/GreenIcons/Speed.png",
+                Text = $"{cm.Season} Runner, {EnumFormatter.FormatTurn(cm.Turn)}"
+            },
+
+            new()
+            {
+                IconPath = "/Resources/GreenIcons/Stamina.png",
+                Text = $"{cm.Track} Racecourse, {(cm.Length % 400 == 0 ? "Standard Distance" : "Non-Standard Distance")}"
+            },
+
+            new()
+            {
+                IconPath = "/Resources/GreenIcons/Power.png",
+                Text = $"{EnumFormatter.FormatCondition(cm.Condition)} Conditions"
+            },
+
+            new()
+            {
+                IconPath = "/Resources/GreenIcons/Guts.png",
+                Text = $"{cm.Weather} Days"
+            }
+        };
     }
     
     private void LeftButtonClicked()
