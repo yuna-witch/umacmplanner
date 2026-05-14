@@ -32,7 +32,13 @@ public class MainWindowViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(GreenSkills));
         }
     }
-    
+
+    public bool IsTripleSevensLineChecked
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
     public List<GreenSkillDisplay> GreenSkills => GetGreenSkills();
 
     public Course CourseOfSelectedCm => GetCourseForSelectedCm();

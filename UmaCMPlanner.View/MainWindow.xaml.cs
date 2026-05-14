@@ -37,9 +37,9 @@ public partial class MainWindow : Window
 
     private void Vm_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(vm.CourseOfSelectedCm))
+        if (e.PropertyName is nameof(vm.CourseOfSelectedCm) or nameof(vm.IsTripleSevensLineChecked))
         {
-            renderer.Render(vm.CourseOfSelectedCm);
+            renderer.Render(vm.CourseOfSelectedCm, vm.IsTripleSevensLineChecked);
         }
     }
 
@@ -47,7 +47,7 @@ public partial class MainWindow : Window
     {
         if (DataContext is MainWindowViewModel vm)
         {
-            renderer.Render(vm.CourseOfSelectedCm);
+            renderer.Render(vm.CourseOfSelectedCm, vm.IsTripleSevensLineChecked);
         }
     }
 }

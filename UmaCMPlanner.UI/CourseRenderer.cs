@@ -24,7 +24,7 @@ public class CourseRenderer
         this.canvas = canvas;
     }
 
-    public void Render(Course course)
+    public void Render(Course course, bool showTripleSevensLine)
     {
         canvas.Children.Clear();
 
@@ -37,6 +37,42 @@ public class CourseRenderer
         DrawNoMansLand(course.NoMansLand, scale);
         DrawSlopes(course.Slopes, scale);
         DrawTrackWithSlopes(course, course.Slopes, scale);
+        
+        if (showTripleSevensLine)
+        {
+            DrawTripleSevensLine(course);
+        }
+    }
+    
+    private void DrawTripleSevensLine(Course course)
+    {
+        double scale = Width / course.Length;
+        int tripleSevensLocation = course.Length - 777;
+
+        Polyline line = new Polyline
+        {
+            Stroke = Brushes.Red,
+            StrokeThickness = 3
+        };
+
+        line.Points.Add(new Point(tripleSevensLocation * scale, canvas.ActualHeight));
+        line.Points.Add(new Point(tripleSevensLocation * scale, 0));
+        
+        canvas.Children.Add(line);
+        
+        TextBlock tripleSevensMeter = new TextBlock
+        {
+            Text = $"{tripleSevensLocation}m",
+            Foreground = Brushes.Black,
+            FontWeight = FontWeights.Bold,
+            FontSize = EndTextFontSize
+        };
+
+        Canvas.SetLeft(tripleSevensMeter, tripleSevensLocation * scale + 5);
+        Canvas.SetTop(tripleSevensMeter, canvas.ActualHeight - RowHeight * 2);
+        Canvas.SetZIndex(tripleSevensMeter, 10);
+
+        canvas.Children.Add(tripleSevensMeter);
     }
 
     private void DrawSections(Course course, double scale)
